@@ -4,13 +4,12 @@ namespace App\Filament\Widgets;
 
 use App\Models\CV;
 use Filament\Widgets\ChartWidget;
-use Illuminate\Support\Carbon;
 
 class CVActivityChart extends ChartWidget
 {
     protected static ?int $sort = 2;
 
-    protected int | string | array $columnSpan = 'full';
+    protected int|string|array $columnSpan = 'full';
 
     public ?string $filter = 'year';
 
@@ -69,8 +68,9 @@ class CVActivityChart extends ChartWidget
         $values = [];
 
         for ($hour = 0; $hour < 24; $hour++) {
-            $labels[] = str_pad($hour, 2, '0', STR_PAD_LEFT) . ':00';
-            $values[] = CV::whereDate('created_at', today())
+            $labels[] = str_pad($hour, 2, '0', STR_PAD_LEFT).':00';
+            $values[] = CV::where('user_id', auth()->id())
+                ->whereDate('created_at', today())
                 ->whereHour('created_at', $hour)
                 ->count();
         }
@@ -86,7 +86,7 @@ class CVActivityChart extends ChartWidget
         for ($day = 6; $day >= 0; $day--) {
             $date = now()->subDays($day);
             $labels[] = $date->format('D');
-            $values[] = CV::whereDate('created_at', $date)->count();
+            $values[] = CV::where('user_id', auth()->id())->whereDate('created_at', $date)->count();
         }
 
         return ['labels' => $labels, 'values' => $values];
@@ -100,7 +100,7 @@ class CVActivityChart extends ChartWidget
         for ($day = 29; $day >= 0; $day--) {
             $date = now()->subDays($day);
             $labels[] = $date->format('M j');
-            $values[] = CV::whereDate('created_at', $date)->count();
+            $values[] = CV::where('user_id', auth()->id())->whereDate('created_at', $date)->count();
         }
 
         return ['labels' => $labels, 'values' => $values];
@@ -114,7 +114,8 @@ class CVActivityChart extends ChartWidget
         for ($month = 11; $month >= 0; $month--) {
             $date = now()->subMonths($month)->startOfMonth();
             $labels[] = $date->format('M Y');
-            $values[] = CV::whereYear('created_at', $date->year)
+            $values[] = CV::where('user_id', auth()->id())
+                ->whereYear('created_at', $date->year)
                 ->whereMonth('created_at', $date->month)
                 ->count();
         }

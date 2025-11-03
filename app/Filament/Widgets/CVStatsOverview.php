@@ -10,19 +10,21 @@ class CVStatsOverview extends StatsOverviewWidget
 {
     protected static ?int $sort = 1;
 
-    protected int | string | array $columnSpan = 'full';
+    protected int|string|array $columnSpan = 'full';
 
     protected function getStats(): array
     {
-        $totalCVs = CV::count();
-        $activeCVs = CV::where('is_active', true)->count();
+        $totalCVs = CV::where('user_id', auth()->id())->count();
+        $activeCVs = CV::where('user_id', auth()->id())->where('is_active', true)->count();
         $activePercentage = $totalCVs > 0 ? round(($activeCVs / $totalCVs) * 100) : 0;
 
-        $cvsThisMonth = CV::whereMonth('created_at', now()->month)
+        $cvsThisMonth = CV::where('user_id', auth()->id())
+            ->whereMonth('created_at', now()->month)
             ->whereYear('created_at', now()->year)
             ->count();
 
-        $cvsLastMonth = CV::whereMonth('created_at', now()->subMonth()->month)
+        $cvsLastMonth = CV::where('user_id', auth()->id())
+            ->whereMonth('created_at', now()->subMonth()->month)
             ->whereYear('created_at', now()->subMonth()->year)
             ->count();
 
@@ -31,7 +33,7 @@ class CVStatsOverview extends StatsOverviewWidget
             : 0;
 
         $last7Days = collect(range(6, 0))->map(function ($daysAgo) {
-            return CV::whereDate('created_at', now()->subDays($daysAgo))->count();
+            return CV::where('user_id', auth()->id())->whereDate('created_at', now()->subDays($daysAgo))->count();
         })->toArray();
 
         return [
@@ -50,11 +52,6 @@ class CVStatsOverview extends StatsOverviewWidget
                 ->descriptionIcon($monthlyChange >= 0 ? 'heroicon-m-arrow-trending-up' : 'heroicon-m-arrow-trending-down')
                 ->chart($last7Days)
                 ->color($monthlyChange >= 0 ? 'success' : 'danger'),
-
-            Stat::make('Users', \App\Models\User::count())
-                ->description('Total registered users')
-                ->descriptionIcon('heroicon-m-users')
-                ->color('info'),
         ];
     }
 }

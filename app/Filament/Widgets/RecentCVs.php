@@ -4,7 +4,6 @@ namespace App\Filament\Widgets;
 
 use App\Filament\Resources\CVS\CVResource;
 use App\Models\CV;
-use Filament\Actions\Action;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -15,7 +14,7 @@ class RecentCVs extends TableWidget
 {
     protected static ?int $sort = 3;
 
-    protected int | string | array $columnSpan = 'full';
+    protected int|string|array $columnSpan = 'full';
 
     protected static ?string $heading = 'Recent CVs';
 
@@ -26,6 +25,7 @@ class RecentCVs extends TableWidget
         return $table
             ->query(
                 CV::query()
+                    ->where('user_id', auth()->id())
                     ->latest('updated_at')
                     ->limit(10)
             )
