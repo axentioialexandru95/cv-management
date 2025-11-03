@@ -26,7 +26,9 @@ export default function Welcome() {
                                     Dashboard
                                 </Button>
                             </a>
-                            <Github className="h-5 w-5 text-foreground" />
+                            <a href="https://github.com/axentioialexandru95/cv-management">
+                                <Github className="h-5 w-5 text-foreground" />
+                            </a>
                         </div>
                     </div>
                 </nav>
@@ -158,7 +160,9 @@ export default function Welcome() {
                             transition={{ delay: 0.2, type: 'spring' }}
                             className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-primary/20"
                         >
-                            <Github className="h-8 w-8 text-primary" />
+                            <a href="https://github.com/axentioialexandru95/cv-management">
+                                <Github className="h-8 w-8 text-primary" />
+                            </a>
                         </motion.div>
 
                         <h2 className="mb-4 text-3xl font-bold text-foreground lg:text-4xl">Open Source & Self-Hostable</h2>
@@ -166,7 +170,7 @@ export default function Welcome() {
                             This project is completely open source and free to use. Host it on your own server and have full control over your data
                             and infrastructure.
                         </p>
-                        <a href="https://github.com/phantomtechind/cv-maker" target="_blank" rel="noopener noreferrer">
+                        <a href="https://github.com/axentioialexandru95/cv-management" target="_blank" rel="noopener noreferrer">
                             <Button
                                 variant="outline"
                                 size="lg"
