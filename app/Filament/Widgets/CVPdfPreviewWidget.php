@@ -11,7 +11,7 @@ class CVPdfPreviewWidget extends Widget
 
     protected static bool $isLazy = false;
 
-    protected int | string | array $columnSpan = 'full';
+    protected static bool $isDiscovered = false;
 
     public ?int $cvId = null;
 

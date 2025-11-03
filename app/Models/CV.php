@@ -13,6 +13,7 @@ class CV extends Model
 {
     /** @use HasFactory<\Database\Factories\CVFactory> */
     use HasFactory;
+
     use SoftDeletes;
 
     protected $table = 'cvs';
@@ -38,6 +39,10 @@ class CV extends Model
         'about_me',
         'driving_licenses',
         'is_active',
+        'is_public',
+        'public_slug',
+        'public_views_count',
+        'last_viewed_at',
     ];
 
     protected function casts(): array
@@ -46,8 +51,40 @@ class CV extends Model
             'date_of_birth' => 'date',
             'driving_licenses' => 'array',
             'is_active' => 'boolean',
+            'is_public' => 'boolean',
             'template_id' => \App\Enums\CVTemplate::class,
+            'last_viewed_at' => 'datetime',
         ];
+    }
+
+    protected static function booted(): void
+    {
+        static::creating(function (CV $cv) {
+            if (! $cv->public_slug) {
+                $cv->public_slug = \Illuminate\Support\Str::random(12);
+            }
+        });
+
+        static::updating(function (CV $cv) {
+            if ($cv->is_public && ! $cv->public_slug) {
+                $cv->public_slug = \Illuminate\Support\Str::random(12);
+            }
+        });
+    }
+
+    public function getPublicUrlAttribute(): ?string
+    {
+        if (! $this->is_public || ! $this->public_slug) {
+            return null;
+        }
+
+        return route('cv.public.show', ['slug' => $this->public_slug]);
+    }
+
+    public function incrementViews(): void
+    {
+        $this->increment('public_views_count');
+        $this->update(['last_viewed_at' => now()]);
     }
 
     public function user(): BelongsTo

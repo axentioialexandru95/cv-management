@@ -45,6 +45,20 @@ class CVSTable
                     ->boolean()
                     ->sortable(),
 
+                IconColumn::make('is_public')
+                    ->label('Public')
+                    ->boolean()
+                    ->sortable()
+                    ->icon(fn ($state) => $state ? Heroicon::OutlinedGlobeAlt : null)
+                    ->color(fn ($state) => $state ? 'success' : 'gray'),
+
+                TextColumn::make('public_views_count')
+                    ->label('Views')
+                    ->badge()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->color('info'),
+
                 TextColumn::make('created_at')
                     ->label('Created')
                     ->dateTime()
@@ -112,6 +126,19 @@ class CVSTable
                     ->url(fn ($record) => route('cv.pdf', $record))
                     ->openUrlInNewTab()
                     ->color('success'),
+                Action::make('publish')
+                    ->label(fn ($record) => $record->is_public ? 'Unpublish' : 'Publish')
+                    ->icon(fn ($record) => $record->is_public ? Heroicon::OutlinedEyeSlash : Heroicon::OutlinedGlobeAlt)
+                    ->color(fn ($record) => $record->is_public ? 'gray' : 'success')
+                    ->requiresConfirmation()
+                    ->modalHeading(fn ($record) => $record->is_public ? 'Unpublish CV?' : 'Publish CV?')
+                    ->modalDescription(fn ($record) => $record->is_public
+                        ? 'This will make the CV private. The public link will no longer be accessible.'
+                        : 'This will make the CV publicly accessible via a unique link.')
+                    ->action(function ($record) {
+                        $record->update(['is_public' => ! $record->is_public]);
+                    })
+                    ->successNotificationTitle(fn ($record) => $record->is_public ? 'CV published successfully!' : 'CV unpublished successfully.'),
                 EditAction::make(),
             ])
             ->toolbarActions([

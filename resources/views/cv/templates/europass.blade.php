@@ -43,7 +43,7 @@
     </style>
 </head>
 <body class="bg-white">
-    <div class="mx-auto max-w-full bg-white text-sm text-gray-900">
+    <div class="mx-auto max-w-full bg-white text-sm text-gray-900 p-20">
         {{-- Header Section --}}
         <div class="mb-8 border-b-4 accent-border pb-6">
             <div class="flex items-start justify-between gap-8">

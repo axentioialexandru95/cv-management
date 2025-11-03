@@ -11,9 +11,9 @@ class ColorHelper
     {
         $rgb = self::hexToRgb($hex);
 
-        $rgb['r'] = max(0, min(255, $rgb['r'] - ($rgb['r'] * $percent / 100)));
-        $rgb['g'] = max(0, min(255, $rgb['g'] - ($rgb['g'] * $percent / 100)));
-        $rgb['b'] = max(0, min(255, $rgb['b'] - ($rgb['b'] * $percent / 100)));
+        $rgb['r'] = (int) max(0, min(255, $rgb['r'] - ($rgb['r'] * $percent / 100)));
+        $rgb['g'] = (int) max(0, min(255, $rgb['g'] - ($rgb['g'] * $percent / 100)));
+        $rgb['b'] = (int) max(0, min(255, $rgb['b'] - ($rgb['b'] * $percent / 100)));
 
         return self::rgbToHex($rgb['r'], $rgb['g'], $rgb['b']);
     }
@@ -25,9 +25,9 @@ class ColorHelper
     {
         $rgb = self::hexToRgb($hex);
 
-        $rgb['r'] = max(0, min(255, $rgb['r'] + ((255 - $rgb['r']) * $percent / 100)));
-        $rgb['g'] = max(0, min(255, $rgb['g'] + ((255 - $rgb['g']) * $percent / 100)));
-        $rgb['b'] = max(0, min(255, $rgb['b'] + ((255 - $rgb['b']) * $percent / 100)));
+        $rgb['r'] = (int) max(0, min(255, $rgb['r'] + ((255 - $rgb['r']) * $percent / 100)));
+        $rgb['g'] = (int) max(0, min(255, $rgb['g'] + ((255 - $rgb['g']) * $percent / 100)));
+        $rgb['b'] = (int) max(0, min(255, $rgb['b'] + ((255 - $rgb['b']) * $percent / 100)));
 
         return self::rgbToHex($rgb['r'], $rgb['g'], $rgb['b']);
     }

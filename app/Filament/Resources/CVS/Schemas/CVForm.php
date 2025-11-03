@@ -54,8 +54,28 @@ class CVForm
                         Toggle::make('is_active')
                             ->label('Active')
                             ->default(true)
-                            ->columnSpanFull()
+                            ->columnSpan(2)
                             ->helperText('Inactive CVs will not be visible for export.'),
+
+                        Toggle::make('is_public')
+                            ->label('Public')
+                            ->default(false)
+                            ->columnSpan(1)
+                            ->reactive()
+                            ->helperText('Allow anyone with the link to view this CV.'),
+
+                        TextInput::make('public_url')
+                            ->label('Public URL')
+                            ->disabled()
+                            ->columnSpanFull()
+                            ->dehydrated(false)
+                            ->formatStateUsing(fn ($get, $record) => $get('is_public') && $record?->public_slug
+                                ? $record->public_url
+                                : 'Enable "Public" toggle to generate a shareable link')
+                            ->helperText(fn ($get) => $get('is_public')
+                                ? 'Share this link to allow others to view your CV. Click the copy icon to copy to clipboard.'
+                                : 'Toggle "Public" on to make this CV accessible via a unique link.')
+                            ->copyable(fn ($get, $record) => $get('is_public') && $record?->public_slug),
                     ])
                     ->columnSpan(3)
                     ->collapsible(),

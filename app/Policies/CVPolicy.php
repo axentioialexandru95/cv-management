@@ -4,7 +4,6 @@ namespace App\Policies;
 
 use App\Models\CV;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class CVPolicy
 {
@@ -22,6 +21,14 @@ class CVPolicy
     public function view(User $user, CV $cv): bool
     {
         return $cv->user_id === $user->id;
+    }
+
+    /**
+     * Determine whether anyone can view the model publicly.
+     */
+    public function viewPublicly(?User $user, CV $cv): bool
+    {
+        return $cv->is_public;
     }
 
     /**

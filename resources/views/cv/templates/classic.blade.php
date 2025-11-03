@@ -29,6 +29,15 @@
             }
         }
 
+        /* Classic serif typography */
+        h1, h2, h3 {
+            font-family: Georgia, 'Times New Roman', serif;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
         .accent-border {
             border-color: var(--accent-color);
         }
@@ -37,138 +46,98 @@
             color: var(--accent-color);
         }
 
-        .accent-bg {
-            background-color: var(--accent-color);
+        .section-divider {
+            border-bottom: 1px solid #d1d5db;
         }
     </style>
 </head>
 <body class="bg-white">
-    <div class="mx-auto max-w-full bg-white text-sm text-gray-900">
-        {{-- Header Section --}}
-        <div class="mb-8 border-b-4 accent-border pb-6">
-            <div class="flex items-start justify-between gap-8">
-                <div class="flex-1">
-                    <h1 class="mb-2 text-3xl font-bold accent-text">{{ $cv->first_name }} {{ $cv->last_name }}</h1>
-                    @if($cv->title)
-                        <p class="mb-4 text-lg font-semibold text-gray-700">{{ $cv->title }}</p>
+    <div class="mx-auto max-w-3xl bg-white px-12 py-10 text-sm text-gray-900">
+        {{-- Header --}}
+        <div class="mb-8 text-center">
+            <h1 class="mb-3 text-4xl font-bold text-gray-900">{{ $cv->first_name }} {{ $cv->last_name }}</h1>
+            @if($cv->title)
+                <p class="mb-4 text-lg italic text-gray-700">{{ $cv->title }}</p>
+            @endif
+
+            {{-- Contact Information --}}
+            <div class="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-sm text-gray-700">
+                @if($cv->email)
+                    <span>{{ $cv->email }}</span>
+                @endif
+                @if($cv->phone)
+                    <span>•</span>
+                    <span>{{ $cv->phone }}</span>
+                @endif
+                @if($cv->city || $cv->country)
+                    <span>•</span>
+                    <span>
+                        @if($cv->city) {{ $cv->city }}, @endif
+                        @if($cv->country) {{ $cv->country }} @endif
+                    </span>
+                @endif
+            </div>
+            @if($cv->linkedin_url || $cv->website_url)
+                <div class="mt-2 flex flex-wrap items-center justify-center gap-x-4 text-sm">
+                    @if($cv->linkedin_url)
+                        <span class="accent-text">{{ $cv->linkedin_url }}</span>
                     @endif
-
-                    <div class="space-y-1 text-gray-700">
-                        @if($cv->address || $cv->city || $cv->postal_code || $cv->country)
-                            <p class="flex items-start gap-2">
-                                <span class="font-semibold">Address:</span>
-                                <span>
-                                    @if($cv->address) {{ $cv->address }}, @endif
-                                    @if($cv->city) {{ $cv->city }} @endif
-                                    @if($cv->postal_code) {{ $cv->postal_code }} @endif
-                                    @if($cv->country) {{ $cv->country }} @endif
-                                </span>
-                            </p>
-                        @endif
-                        @if($cv->phone)
-                            <p class="flex items-start gap-2">
-                                <span class="font-semibold">Phone:</span>
-                                <span>{{ $cv->phone }}</span>
-                            </p>
-                        @endif
-                        @if($cv->email)
-                            <p class="flex items-start gap-2">
-                                <span class="font-semibold">Email:</span>
-                                <span>{{ $cv->email }}</span>
-                            </p>
-                        @endif
-                        @if($cv->linkedin_url)
-                            <p class="flex items-start gap-2">
-                                <span class="font-semibold">LinkedIn:</span>
-                                <span class="break-all">{{ $cv->linkedin_url }}</span>
-                            </p>
-                        @endif
-                        @if($cv->website_url)
-                            <p class="flex items-start gap-2">
-                                <span class="font-semibold">Website:</span>
-                                <span class="break-all">{{ $cv->website_url }}</span>
-                            </p>
-                        @endif
-                    </div>
+                    @if($cv->website_url)
+                        <span class="accent-text">{{ $cv->website_url }}</span>
+                    @endif
                 </div>
-
-                @if($cv->profile_photo_path)
-                    <div class="shrink-0">
-                        @php
-                            $profilePhotoPath = Storage::path($cv->profile_photo_path);
-                            $imageData = base64_encode(file_get_contents($profilePhotoPath));
-                            $imageType = pathinfo($profilePhotoPath, PATHINFO_EXTENSION);
-                            $imageSrc = "data:image/{$imageType};base64,{$imageData}";
-                        @endphp
-                        <img src="{{ $imageSrc }}" alt="Profile Photo" class="h-32 w-32 rounded-lg border-2 border-gray-300 object-cover">
-                    </div>
-                @endif
-            </div>
+            @endif
         </div>
 
-        {{-- Personal Information --}}
-        <div class="mb-6">
-            <h2 class="mb-3 border-b-2 accent-border pb-1 text-xl font-bold accent-text">Personal Information</h2>
-            <div class="grid grid-cols-2 gap-x-8 gap-y-2">
-                @if($cv->date_of_birth)
-                    <div>
-                        <span class="font-semibold">Date of birth:</span>
-                        {{ $cv->date_of_birth->format('d/m/Y') }}
-                    </div>
-                @endif
-                @if($cv->nationality)
-                    <div>
-                        <span class="font-semibold">Nationality:</span>
-                        {{ $cv->nationality }}
-                    </div>
-                @endif
-                @if($cv->driving_licenses && count($cv->driving_licenses) > 0)
-                    <div class="col-span-2">
-                        <span class="font-semibold">Driving license:</span>
-                        {{ implode(', ', $cv->driving_licenses) }}
-                    </div>
-                @endif
+        {{-- Profile Photo --}}
+        @if($cv->profile_photo_path)
+            <div class="mb-8 text-center">
+                @php
+                    $profilePhotoPath = Storage::path($cv->profile_photo_path);
+                    $imageData = base64_encode(file_get_contents($profilePhotoPath));
+                    $imageType = pathinfo($profilePhotoPath, PATHINFO_EXTENSION);
+                    $imageSrc = "data:image/{$imageType};base64,{$imageData}";
+                @endphp
+                <img src="{{ $imageSrc }}" alt="Profile Photo" class="mx-auto h-32 w-32 rounded border border-gray-300 object-cover">
             </div>
-        </div>
+        @endif
 
-        {{-- About Me --}}
+        {{-- About Me / Profile --}}
         @if($cv->about_me)
-            <div class="mb-6">
-                <h2 class="mb-3 border-b-2 accent-border pb-1 text-xl font-bold accent-text">Profile</h2>
-                <p class="whitespace-pre-line text-justify leading-relaxed text-gray-700">{{ $cv->about_me }}</p>
+            <div class="section-divider mb-6 pb-6">
+                <h2 class="mb-3 text-center text-xl font-bold uppercase tracking-wide text-gray-800">Profile</h2>
+                <p class="whitespace-pre-line text-center leading-relaxed text-gray-700">{{ $cv->about_me }}</p>
             </div>
         @endif
 
         {{-- Work Experience --}}
         @if($cv->workExperiences->count() > 0)
-            <div class="mb-6">
-                <h2 class="mb-3 border-b-2 accent-border pb-1 text-xl font-bold accent-text">Work Experience</h2>
-                <div class="space-y-4">
+            <div class="section-divider mb-6 pb-6">
+                <h2 class="mb-4 text-center text-xl font-bold uppercase tracking-wide text-gray-800">Professional Experience</h2>
+                <div class="space-y-5">
                     @foreach($cv->workExperiences as $experience)
-                        <div class="avoid-break flex gap-4">
-                            <div class="w-32 shrink-0 text-right text-sm font-semibold text-gray-600">
-                                @if($experience->start_date)
-                                    {{ $experience->start_date->format('m/Y') }} –
-                                @endif
-                                @if($experience->is_current)
-                                    Present
-                                @elseif($experience->end_date)
-                                    {{ $experience->end_date->format('m/Y') }}
-                                @endif
-                            </div>
-                            <div class="flex-1">
-                                <h3 class="font-bold text-gray-900">{{ $experience->job_title }}</h3>
-                                <p class="mb-1 font-semibold accent-text">{{ $experience->employer }}</p>
-                                @if($experience->city || $experience->country)
-                                    <p class="mb-2 text-xs text-gray-600">
+                        <div class="avoid-break">
+                            <div class="mb-2 text-center">
+                                <h3 class="text-lg font-bold text-gray-900">{{ $experience->job_title }}</h3>
+                                <p class="italic accent-text">{{ $experience->employer }}</p>
+                                <p class="text-sm text-gray-600">
+                                    @if($experience->city || $experience->country)
                                         @if($experience->city) {{ $experience->city }}, @endif
-                                        {{ $experience->country }}
-                                    </p>
-                                @endif
-                                @if($experience->description)
-                                    <p class="whitespace-pre-line text-justify leading-relaxed text-gray-700">{{ $experience->description }}</p>
-                                @endif
+                                        {{ $experience->country }} —
+                                    @endif
+                                    @if($experience->start_date)
+                                        {{ $experience->start_date->format('F Y') }} –
+                                    @endif
+                                    @if($experience->is_current)
+                                        Present
+                                    @elseif($experience->end_date)
+                                        {{ $experience->end_date->format('F Y') }}
+                                    @endif
+                                </p>
                             </div>
+                            @if($experience->description)
+                                <p class="whitespace-pre-line text-justify leading-relaxed text-gray-700">{{ $experience->description }}</p>
+                            @endif
                         </div>
                     @endforeach
                 </div>
@@ -177,45 +146,62 @@
 
         {{-- Education --}}
         @if($cv->educationEntries->count() > 0)
-            <div class="mb-6">
-                <h2 class="mb-3 border-b-2 accent-border pb-1 text-xl font-bold accent-text">Education and Training</h2>
-                <div class="space-y-4">
+            <div class="section-divider mb-6 pb-6">
+                <h2 class="mb-4 text-center text-xl font-bold uppercase tracking-wide text-gray-800">Education</h2>
+                <div class="space-y-5">
                     @foreach($cv->educationEntries as $education)
-                        <div class="avoid-break flex gap-4">
-                            <div class="w-32 shrink-0 text-right text-sm font-semibold text-gray-600">
-                                @if($education->start_date)
-                                    {{ $education->start_date->format('m/Y') }} –
-                                @endif
-                                @if($education->is_current)
-                                    Present
-                                @elseif($education->end_date)
-                                    {{ $education->end_date->format('m/Y') }}
-                                @endif
-                            </div>
-                            <div class="flex-1">
-                                <h3 class="font-bold text-gray-900">{{ $education->qualification }}</h3>
+                        <div class="avoid-break">
+                            <div class="text-center">
+                                <h3 class="text-lg font-bold text-gray-900">{{ $education->qualification }}</h3>
                                 @if($education->field_of_study)
                                     <p class="text-gray-700">{{ $education->field_of_study }}</p>
                                 @endif
-                                <p class="mb-1 font-semibold accent-text">{{ $education->institution }}</p>
-                                @if($education->city || $education->country)
-                                    <p class="mb-2 text-xs text-gray-600">
+                                <p class="italic accent-text">{{ $education->institution }}</p>
+                                <p class="text-sm text-gray-600">
+                                    @if($education->city || $education->country)
                                         @if($education->city) {{ $education->city }}, @endif
-                                        {{ $education->country }}
-                                    </p>
-                                @endif
+                                        {{ $education->country }} —
+                                    @endif
+                                    @if($education->start_date)
+                                        {{ $education->start_date->format('F Y') }} –
+                                    @endif
+                                    @if($education->is_current)
+                                        Present
+                                    @elseif($education->end_date)
+                                        {{ $education->end_date->format('F Y') }}
+                                    @endif
+                                </p>
                                 @if($education->grade)
-                                    <p class="mb-1 text-sm text-gray-700">
+                                    <p class="mt-1 text-sm text-gray-700">
                                         <span class="font-semibold">Grade:</span> {{ $education->grade }}
                                     </p>
                                 @endif
-                                @if($education->eqf_level)
-                                    <p class="mb-1 text-xs text-gray-600">EQF Level {{ $education->eqf_level }}</p>
-                                @endif
-                                @if($education->description)
-                                    <p class="mt-2 whitespace-pre-line text-justify leading-relaxed text-gray-700">{{ $education->description }}</p>
-                                @endif
                             </div>
+                            @if($education->description)
+                                <p class="mt-2 text-justify leading-relaxed text-gray-700">{{ $education->description }}</p>
+                            @endif
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        @endif
+
+        {{-- Skills --}}
+        @if($cv->skills->count() > 0)
+            <div class="section-divider mb-6 pb-6">
+                <h2 class="mb-4 text-center text-xl font-bold uppercase tracking-wide text-gray-800">Skills & Competencies</h2>
+                @php
+                    $groupedSkills = $cv->skills->groupBy('category');
+                @endphp
+                <div class="space-y-3">
+                    @foreach($groupedSkills as $category => $skills)
+                        <div>
+                            <h3 class="mb-2 font-bold text-gray-900">{{ Str::title($category) }}</h3>
+                            <p class="text-gray-700">
+                                @foreach($skills as $index => $skill)
+                                    {{ $skill->name }}@if($skill->proficiency_level) ({{ $skill->proficiency_level }})@endif@if(!$loop->last), @endif
+                                @endforeach
+                            </p>
                         </div>
                     @endforeach
                 </div>
@@ -224,76 +210,21 @@
 
         {{-- Languages --}}
         @if($cv->languages->count() > 0)
-            <div class="mb-6">
-                <h2 class="mb-3 border-b-2 accent-border pb-1 text-xl font-bold accent-text">Language Skills</h2>
-                <div class="space-y-3">
+            <div class="section-divider mb-6 pb-6">
+                <h2 class="mb-4 text-center text-xl font-bold uppercase tracking-wide text-gray-800">Languages</h2>
+                <div class="space-y-2">
                     @foreach($cv->languages as $language)
                         <div>
-                            <h3 class="mb-1 font-bold text-gray-900">{{ $language->name }}</h3>
+                            <span class="font-bold text-gray-900">{{ $language->name }}:</span>
                             @if($language->pivot->is_native)
-                                <p class="text-sm text-gray-700">Native language</p>
+                                <span class="text-gray-700">Native speaker</span>
                             @else
-                                <div class="grid grid-cols-5 gap-2 text-xs">
+                                <span class="text-gray-700">
                                     @if($language->pivot->listening)
-                                        <div>
-                                            <span class="font-semibold">Listening:</span> {{ $language->pivot->listening }}
-                                        </div>
+                                        {{ $language->pivot->listening }}
                                     @endif
-                                    @if($language->pivot->reading)
-                                        <div>
-                                            <span class="font-semibold">Reading:</span> {{ $language->pivot->reading }}
-                                        </div>
-                                    @endif
-                                    @if($language->pivot->spoken_interaction)
-                                        <div>
-                                            <span class="font-semibold">Interaction:</span> {{ $language->pivot->spoken_interaction }}
-                                        </div>
-                                    @endif
-                                    @if($language->pivot->spoken_production)
-                                        <div>
-                                            <span class="font-semibold">Production:</span> {{ $language->pivot->spoken_production }}
-                                        </div>
-                                    @endif
-                                    @if($language->pivot->writing)
-                                        <div>
-                                            <span class="font-semibold">Writing:</span> {{ $language->pivot->writing }}
-                                        </div>
-                                    @endif
-                                </div>
+                                </span>
                             @endif
-                            @if($language->pivot->certificates)
-                                <p class="mt-1 text-xs text-gray-600">
-                                    <span class="font-semibold">Certificates:</span> {{ $language->pivot->certificates }}
-                                </p>
-                            @endif
-                        </div>
-                    @endforeach
-                    <p class="mt-3 text-xs text-gray-500">Levels: A1/A2: Basic user - B1/B2: Independent user - C1/C2: Proficient user</p>
-                </div>
-            </div>
-        @endif
-
-        {{-- Skills --}}
-        @if($cv->skills->count() > 0)
-            <div class="mb-6">
-                <h2 class="mb-3 border-b-2 accent-border pb-1 text-xl font-bold accent-text">Skills</h2>
-                @php
-                    $groupedSkills = $cv->skills->groupBy('category');
-                @endphp
-                <div class="space-y-3">
-                    @foreach($groupedSkills as $category => $skills)
-                        <div>
-                            <h3 class="mb-1 font-bold text-gray-900">{{ Str::title($category) }}</h3>
-                            <div class="flex flex-wrap gap-x-4 gap-y-1">
-                                @foreach($skills as $skill)
-                                    <div class="text-gray-700">
-                                        <span class="font-semibold">{{ $skill->name }}</span>
-                                        @if($skill->proficiency_level)
-                                            <span class="text-xs text-gray-600">({{ $skill->proficiency_level }})</span>
-                                        @endif
-                                    </div>
-                                @endforeach
-                            </div>
                         </div>
                     @endforeach
                 </div>
@@ -302,29 +233,23 @@
 
         {{-- Certifications --}}
         @if($cv->certifications->count() > 0)
-            <div class="mb-6">
-                <h2 class="mb-3 border-b-2 accent-border pb-1 text-xl font-bold accent-text">Certifications</h2>
+            <div class="section-divider mb-6 pb-6">
+                <h2 class="mb-4 text-center text-xl font-bold uppercase tracking-wide text-gray-800">Certifications</h2>
                 <div class="space-y-3">
                     @foreach($cv->certifications as $certification)
                         <div class="avoid-break">
                             <h3 class="font-bold text-gray-900">{{ $certification->title }}</h3>
-                            <p class="text-sm font-semibold accent-text">{{ $certification->issuing_organization }}</p>
+                            <p class="italic accent-text">{{ $certification->issuing_organization }}</p>
                             @if($certification->issue_date)
-                                <p class="text-xs text-gray-600">
-                                    Issued: {{ $certification->issue_date->format('m/Y') }}
+                                <p class="text-sm text-gray-600">
+                                    Issued: {{ $certification->issue_date->format('F Y') }}
                                     @if($certification->expiry_date)
-                                        - Expires: {{ $certification->expiry_date->format('m/Y') }}
+                                        • Expires: {{ $certification->expiry_date->format('F Y') }}
                                     @endif
                                 </p>
                             @endif
-                            @if($certification->credential_id)
-                                <p class="text-xs text-gray-600">Credential ID: {{ $certification->credential_id }}</p>
-                            @endif
-                            @if($certification->credential_url)
-                                <p class="break-all text-xs accent-text">{{ $certification->credential_url }}</p>
-                            @endif
                             @if($certification->description)
-                                <p class="mt-1 text-sm text-gray-700">{{ $certification->description }}</p>
+                                <p class="mt-1 text-gray-700">{{ $certification->description }}</p>
                             @endif
                         </div>
                     @endforeach
@@ -334,39 +259,34 @@
 
         {{-- Projects --}}
         @if($cv->projects->count() > 0)
-            <div class="mb-6">
-                <h2 class="mb-3 border-b-2 accent-border pb-1 text-xl font-bold accent-text">Projects</h2>
+            <div class="section-divider mb-6 pb-6">
+                <h2 class="mb-4 text-center text-xl font-bold uppercase tracking-wide text-gray-800">Notable Projects</h2>
                 <div class="space-y-4">
                     @foreach($cv->projects as $project)
                         <div class="avoid-break">
-                            <div class="mb-1 flex items-start justify-between">
-                                <h3 class="font-bold text-gray-900">{{ $project->title }}</h3>
-                                @if($project->start_date || $project->is_ongoing || $project->end_date)
-                                    <span class="shrink-0 text-xs text-gray-600">
-                                        @if($project->start_date)
-                                            {{ $project->start_date->format('m/Y') }} –
-                                        @endif
-                                        @if($project->is_ongoing)
-                                            Present
-                                        @elseif($project->end_date)
-                                            {{ $project->end_date->format('m/Y') }}
-                                        @endif
-                                    </span>
-                                @endif
-                            </div>
+                            <h3 class="font-bold text-gray-900">{{ $project->title }}</h3>
                             @if($project->role)
-                                <p class="text-sm font-semibold accent-text">{{ $project->role }}</p>
+                                <p class="italic text-gray-700">{{ $project->role }}</p>
                             @endif
-                            @if($project->description)
-                                <p class="mb-2 whitespace-pre-line text-justify leading-relaxed text-gray-700">{{ $project->description }}</p>
-                            @endif
-                            @if($project->technologies && count($project->technologies) > 0)
-                                <p class="text-xs text-gray-600">
-                                    <span class="font-semibold">Technologies:</span> {{ implode(', ', $project->technologies) }}
+                            @if($project->start_date || $project->is_ongoing || $project->end_date)
+                                <p class="text-sm text-gray-600">
+                                    @if($project->start_date)
+                                        {{ $project->start_date->format('F Y') }} –
+                                    @endif
+                                    @if($project->is_ongoing)
+                                        Present
+                                    @elseif($project->end_date)
+                                        {{ $project->end_date->format('F Y') }}
+                                    @endif
                                 </p>
                             @endif
-                            @if($project->url)
-                                <p class="break-all text-xs accent-text">{{ $project->url }}</p>
+                            @if($project->description)
+                                <p class="mt-1 whitespace-pre-line text-justify leading-relaxed text-gray-700">{{ $project->description }}</p>
+                            @endif
+                            @if($project->technologies && count($project->technologies) > 0)
+                                <p class="mt-1 text-sm text-gray-600">
+                                    <span class="font-semibold">Technologies:</span> {{ implode(', ', $project->technologies) }}
+                                </p>
                             @endif
                         </div>
                     @endforeach
@@ -376,35 +296,16 @@
 
         {{-- Publications --}}
         @if($cv->publications->count() > 0)
-            <div class="mb-6">
-                <h2 class="mb-3 border-b-2 accent-border pb-1 text-xl font-bold accent-text">Publications</h2>
+            <div class="section-divider mb-6 pb-6">
+                <h2 class="mb-4 text-center text-xl font-bold uppercase tracking-wide text-gray-800">Publications</h2>
                 <div class="space-y-3">
                     @foreach($cv->publications as $publication)
                         <div class="avoid-break">
-                            <h3 class="font-bold text-gray-900">{{ $publication->title }}</h3>
+                            <p class="font-bold text-gray-900">{{ $publication->title }}</p>
                             <p class="text-sm text-gray-700">{{ $publication->authors }}</p>
-                            <p class="text-sm font-semibold accent-text">{{ $publication->publication_venue }}</p>
-                            @if($publication->publication_type || $publication->publication_date)
-                                <p class="text-xs text-gray-600">
-                                    @if($publication->publication_type)
-                                        {{ $publication->publication_type }}
-                                    @endif
-                                    @if($publication->publication_type && $publication->publication_date)
-                                        -
-                                    @endif
-                                    @if($publication->publication_date)
-                                        {{ $publication->publication_date->format('Y') }}
-                                    @endif
-                                </p>
-                            @endif
-                            @if($publication->doi)
-                                <p class="text-xs text-gray-600">DOI: {{ $publication->doi }}</p>
-                            @endif
-                            @if($publication->url)
-                                <p class="break-all text-xs accent-text">{{ $publication->url }}</p>
-                            @endif
-                            @if($publication->description)
-                                <p class="mt-1 text-sm text-gray-700">{{ $publication->description }}</p>
+                            <p class="italic accent-text">{{ $publication->publication_venue }}</p>
+                            @if($publication->publication_date)
+                                <p class="text-sm text-gray-600">{{ $publication->publication_date->format('Y') }}</p>
                             @endif
                         </div>
                     @endforeach
@@ -414,43 +315,65 @@
 
         {{-- Volunteer Experience --}}
         @if($cv->volunteerExperiences->count() > 0)
-            <div class="mb-6">
-                <h2 class="mb-3 border-b-2 accent-border pb-1 text-xl font-bold accent-text">Volunteer Experience</h2>
+            <div class="section-divider mb-6 pb-6">
+                <h2 class="mb-4 text-center text-xl font-bold uppercase tracking-wide text-gray-800">Volunteer Work</h2>
                 <div class="space-y-4">
                     @foreach($cv->volunteerExperiences as $volunteer)
-                        <div class="avoid-break flex gap-4">
-                            <div class="w-32 shrink-0 text-right text-sm font-semibold text-gray-600">
-                                @if($volunteer->start_date)
-                                    {{ $volunteer->start_date->format('m/Y') }} –
-                                @endif
-                                @if($volunteer->is_current)
-                                    Present
-                                @elseif($volunteer->end_date)
-                                    {{ $volunteer->end_date->format('m/Y') }}
-                                @endif
-                            </div>
-                            <div class="flex-1">
+                        <div class="avoid-break">
+                            <div class="text-center">
                                 <h3 class="font-bold text-gray-900">{{ $volunteer->role }}</h3>
-                                <p class="mb-1 font-semibold accent-text">{{ $volunteer->organization }}</p>
-                                @if($volunteer->city || $volunteer->country)
-                                    <p class="mb-2 text-xs text-gray-600">
+                                <p class="italic accent-text">{{ $volunteer->organization }}</p>
+                                <p class="text-sm text-gray-600">
+                                    @if($volunteer->city || $volunteer->country)
                                         @if($volunteer->city) {{ $volunteer->city }}, @endif
-                                        {{ $volunteer->country }}
-                                    </p>
-                                @endif
-                                @if($volunteer->description)
-                                    <p class="whitespace-pre-line text-justify leading-relaxed text-gray-700">{{ $volunteer->description }}</p>
-                                @endif
+                                        {{ $volunteer->country }} —
+                                    @endif
+                                    @if($volunteer->start_date)
+                                        {{ $volunteer->start_date->format('F Y') }} –
+                                    @endif
+                                    @if($volunteer->is_current)
+                                        Present
+                                    @elseif($volunteer->end_date)
+                                        {{ $volunteer->end_date->format('F Y') }}
+                                    @endif
+                                </p>
                             </div>
+                            @if($volunteer->description)
+                                <p class="mt-2 whitespace-pre-line text-justify leading-relaxed text-gray-700">{{ $volunteer->description }}</p>
+                            @endif
                         </div>
                     @endforeach
                 </div>
             </div>
         @endif
 
+        {{-- Personal Information --}}
+        @if($cv->date_of_birth || $cv->nationality || ($cv->driving_licenses && count($cv->driving_licenses) > 0))
+            <div class="mb-6">
+                <h2 class="mb-4 text-center text-xl font-bold uppercase tracking-wide text-gray-800">Additional Information</h2>
+                <div class="space-y-1 text-center text-gray-700">
+                    @if($cv->date_of_birth)
+                        <p>
+                            <span class="font-semibold">Date of Birth:</span> {{ $cv->date_of_birth->format('d F Y') }}
+                        </p>
+                    @endif
+                    @if($cv->nationality)
+                        <p>
+                            <span class="font-semibold">Nationality:</span> {{ $cv->nationality }}
+                        </p>
+                    @endif
+                    @if($cv->driving_licenses && count($cv->driving_licenses) > 0)
+                        <p>
+                            <span class="font-semibold">Driving License:</span> {{ implode(', ', $cv->driving_licenses) }}
+                        </p>
+                    @endif
+                </div>
+            </div>
+        @endif
+
         {{-- Footer --}}
         <div class="mt-8 border-t border-gray-300 pt-4 text-center text-xs text-gray-500">
-            <p>© {{ now()->year }} {{ $cv->first_name }} {{ $cv->last_name }}. Europass CV format.</p>
+            <p>© {{ now()->year }} {{ $cv->first_name }} {{ $cv->last_name }}. Classic CV format.</p>
         </div>
     </div>
 </body>
