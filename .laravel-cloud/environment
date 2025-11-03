@@ -1,0 +1,17 @@
+# Browsershot Configuration for Laravel Cloud
+
+# Node.js binary path (usually auto-detected)
+NODE_BINARY_PATH=/usr/bin/node
+
+# NPM binary path
+NPM_BINARY_PATH=/usr/bin/npm
+
+# Chrome/Chromium binary path
+CHROME_BINARY_PATH=/usr/bin/chromium
+
+# Puppeteer configuration
+PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
+
+# Increase timeout for PDF generation
+BROWSERSHOT_TIMEOUT=120

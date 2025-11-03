@@ -1,0 +1,54 @@
+build:
+  - name: Install Chromium and dependencies for PDF generation
+    run: |
+      apt-get update -qq
+      apt-get install -y -qq \
+        chromium \
+        chromium-driver \
+        fonts-liberation \
+        libasound2 \
+        libatk-bridge2.0-0 \
+        libatk1.0-0 \
+        libcairo2 \
+        libcups2 \
+        libdbus-1-3 \
+        libgdk-pixbuf2.0-0 \
+        libglib2.0-0 \
+        libgtk-3-0 \
+        libnspr4 \
+        libnss3 \
+        libpango-1.0-0 \
+        libx11-6 \
+        libx11-xcb1 \
+        libxcb1 \
+        libxcomposite1 \
+        libxcursor1 \
+        libxdamage1 \
+        libxext6 \
+        libxfixes3 \
+        libxi6 \
+        libxrandr2 \
+        libxrender1 \
+        libxss1 \
+        libxtst6 \
+        xdg-utils
+
+  - name: Verify Chromium installation
+    run: |
+      which chromium
+      chromium --version
+
+  - name: Set Puppeteer environment
+    run: |
+      echo "PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true" >> $GITHUB_ENV
+      echo "PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium" >> $GITHUB_ENV
+
+deploy:
+  - name: Clear application cache
+    run: php artisan optimize:clear
+
+  - name: Run database migrations
+    run: php artisan migrate --force
+
+  - name: Cache application
+    run: php artisan optimize
