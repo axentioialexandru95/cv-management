@@ -92,12 +92,11 @@
                     </div>
                 </div>
 
-                @if($cv->profile_photo_path)
+                @if($cv->profile_photo_path && Storage::exists($cv->profile_photo_path))
                     <div class="shrink-0">
                         @php
-                            $profilePhotoPath = Storage::path($cv->profile_photo_path);
-                            $imageData = base64_encode(file_get_contents($profilePhotoPath));
-                            $imageType = pathinfo($profilePhotoPath, PATHINFO_EXTENSION);
+                            $imageData = base64_encode(Storage::get($cv->profile_photo_path));
+                            $imageType = pathinfo($cv->profile_photo_path, PATHINFO_EXTENSION);
                             $imageSrc = "data:image/{$imageType};base64,{$imageData}";
                         @endphp
                         <img src="{{ $imageSrc }}" alt="Profile Photo" class="h-32 w-32 rounded-lg border-2 border-gray-300 object-cover">
